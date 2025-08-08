@@ -13,15 +13,8 @@ namespace Pure3D.Chunks
 
         public override void ReadHeader(Stream stream, long length)
         {
-            if (length != 4)
-            {
-                GD.PrintErr("Base Animation chunk's data is not 4 bytes long!");
-            }
-            else
-            {
-                BinaryReader reader = new(stream);
-                Version = reader.ReadUInt32();
-            }
+            BinaryReader reader = new(stream);
+            Version = reader.ReadUInt32();
         }
 
         public override string ToString()
