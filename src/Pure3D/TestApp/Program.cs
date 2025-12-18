@@ -12,7 +12,7 @@
 
     static void PrintHierarchy(Pure3D.Chunk chunk, int indent)
     {
-        Console.WriteLine("{1}{0}", chunk.ToString(), new String('\t', indent));
+        Console.WriteLine("{1}{0}", chunk.ToString(), new string('\t', indent));
 
         foreach (var child in chunk.Children)
             PrintHierarchy(child, indent + 1);
