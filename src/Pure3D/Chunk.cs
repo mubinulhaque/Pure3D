@@ -6,11 +6,11 @@ using System.Reflection;
 
 namespace Pure3D
 {
-    public abstract class Chunk
+    public abstract class Chunk(File file, uint type)
     {
-        public uint Type;
-        public List<Chunk> Children;
-        public File File;
+        public uint Type = type;
+        public List<Chunk> Children = [];
+        public File File = file;
         public Chunk Parent;
 
         public bool IsRoot
@@ -21,21 +21,14 @@ namespace Pure3D
             }
         }
 
-        public Chunk(File file, uint type)
-        {
-            Children = new List<Chunk>();
-            Type = type;
-            File = file;
-        }
-
         public T[] GetChildren<T>() where T : Chunk
         {
-            return Children.FindAll(delegate (Chunk c) { return c is T; }).Cast<T>().ToArray();
+            return [.. Children.FindAll(delegate (Chunk c) { return c is T; }).Cast<T>()];
         }
 
         public T[] GetChildrenByName<T>(string name) where T : Chunks.Named
         {
-            return Children.FindAll(delegate (Chunk c) { return c is T && ((Chunks.Named)c).Name == name; }).Cast<T>().ToArray();
+            return [.. Children.FindAll(delegate (Chunk c) { return c is T && ((Chunks.Named)c).Name == name; }).Cast<T>()];
         }
 
         public void ReadChildren(Stream stream, long chunkEnd)
@@ -56,7 +49,7 @@ namespace Pure3D
 
         public void Read(Stream stream, bool readChildren, long parentChunkEnd)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new(stream);
             long chunkStart = stream.Position - 4;
             uint headerSize = reader.ReadUInt32();
             uint chunkSize = reader.ReadUInt32();
@@ -84,12 +77,13 @@ namespace Pure3D
         public abstract void ReadHeader(Stream stream, long length);
 
         protected static Dictionary<uint, Type> chunkTypeDictionary = null;
+
         public static Chunk NewChunkFromType(File file, uint type)
         {
             // cache the list
             if (chunkTypeDictionary == null)
             {
-                chunkTypeDictionary = new Dictionary<uint, Type>();
+                chunkTypeDictionary = [];
 
                 foreach (var chunk in ChunkType.GetSupported())
                 {
@@ -102,7 +96,7 @@ namespace Pure3D
                 return new Chunks.Unknown(file, type);
 
             Type chunkType = chunkTypeDictionary[type];
-            return (Chunk)Activator.CreateInstance(chunkType, new object[] { file, type });
+            return (Chunk)Activator.CreateInstance(chunkType, [file, type]);
         }
     }
 }
