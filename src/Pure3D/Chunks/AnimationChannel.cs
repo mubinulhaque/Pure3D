@@ -1,0 +1,349 @@
+using System.IO;
+using System.Text;
+
+namespace Pure3D.Chunks
+{
+    /// <summary>
+    /// Abstract class for the child of an Animation Group chunk</c>.
+    /// </summary>
+    public abstract class AnimationChannel(File file, uint type) : Chunk(file, type)
+    {
+        public uint Version;
+        public uint NumberOfFrames;
+        public string Parameter;
+        public ushort[] Frames;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            BinaryReader reader = new(stream);
+            Version = reader.ReadUInt32();
+            Parameter = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            NumberOfFrames = reader.ReadUInt32();
+
+            Frames = new ushort[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Frames[i] = reader.ReadUInt16();
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"{ToShortString()}: {Parameter}, {NumberOfFrames} Frames";
+        }
+
+        public override string ToShortString()
+        {
+            return "Animation Channel";
+        }
+    }
+
+    [ChunkType(1184008)]
+    public class BooleanChannel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public bool Start;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            BinaryReader reader = new(stream);
+            Version = reader.ReadUInt32();
+            Parameter = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            Start = reader.ReadUInt16() == 1;
+            NumberOfFrames = reader.ReadUInt32();
+
+            Frames = new ushort[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Frames[i] = reader.ReadUInt16();
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Boolean Channel";
+        }
+    }
+
+    [ChunkType(1184009)]
+    public class ColourChannel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public uint[] Values;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+
+            Values = new uint[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Values[i] = reader.ReadUInt32();
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Colour Channel";
+        }
+    }
+
+    /// <summary>
+    /// Animation for the rotation of a <c>SkeletonJoint</c>.
+    /// </summary>
+    [ChunkType(1184017)]
+    public class CompressedQuaternionChannel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public Quaternion[] Values;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+
+            Values = new Quaternion[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                var w = reader.ReadInt16() / (float)short.MaxValue;
+                Values[i] = new Quaternion
+                (
+                    reader.ReadInt16() / (float)short.MaxValue,
+                    reader.ReadInt16() / (float)short.MaxValue,
+                    reader.ReadInt16() / (float)short.MaxValue,
+                    w
+                );
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Compressed Quaternion Channel";
+        }
+    }
+
+    [ChunkType(1184007)]
+    public class EntityChannel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public string[] Values;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+
+            Values = new string[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Values[i] = Util.ReadString(reader);
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return $"Entity Channel";
+        }
+    }
+
+    [ChunkType(1184000)]
+    public class Float1Channel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public float[] Values;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+
+            Values = new float[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Values[i] = reader.ReadSingle();
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Float 1 Channel";
+        }
+    }
+
+    [ChunkType(1184001)]
+    public class Float2Channel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public Vector2[] Values;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+
+            Values = new Vector2[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Values[i] = Util.ReadVector2(reader);
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Float 2 Channel";
+        }
+    }
+
+    [ChunkType(1184014)]
+    public class IntegerChannel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public uint[] Values;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+
+            Values = new uint[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Values[i] = reader.ReadUInt32();
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Integer Channel";
+        }
+    }
+
+    /// <summary>
+    /// Animation for the rotation of a <c>SkeletonJoint</c>.
+    /// </summary>
+    [ChunkType(1184005)]
+    public class QuaternionChannel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public Quaternion[] Values;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+
+            Values = new Quaternion[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                var w = reader.ReadSingle();
+                Values[i] = new Quaternion
+                (
+                    reader.ReadSingle(),
+                    reader.ReadSingle(),
+                    reader.ReadSingle(),
+                    w
+                );
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Quaternion Channel";
+        }
+    }
+
+    /// <summary>
+    /// Animation for the transform of a <c>SkeletonJoint</c>.
+    /// </summary>
+    [ChunkType(1184002)]
+    public class Vector1Channel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public ushort Mapping;
+        public float[] Values;
+        public Vector3 Constants;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            BinaryReader reader = new(stream);
+            Version = reader.ReadUInt32();
+            Parameter = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            Mapping = reader.ReadUInt16();
+            Constants = Util.ReadVector3(reader);
+            NumberOfFrames = reader.ReadUInt32();
+
+            Frames = new ushort[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Frames[i] = reader.ReadUInt16();
+            }
+
+            Values = new float[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Values[i] = reader.ReadSingle();
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Vector 1 Channel";
+        }
+    }
+
+    /// <summary>
+    /// Animation for the transform of a <c>SkeletonJoint</c>.
+    /// </summary>
+    [ChunkType(1184003)]
+    public class Vector2Channel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public ushort Mapping;
+        public Vector2[] Values;
+        public Vector3 Constants;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            BinaryReader reader = new(stream);
+            Version = reader.ReadUInt32();
+            Parameter = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            Mapping = reader.ReadUInt16();
+            Constants = Util.ReadVector3(reader);
+            NumberOfFrames = reader.ReadUInt32();
+
+            Frames = new ushort[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Frames[i] = reader.ReadUInt16();
+            }
+
+            Values = new Vector2[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Values[i] = Util.ReadVector2(reader);
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Vector 2 Channel";
+        }
+    }
+
+    /// <summary>
+    /// Animation for the transform of a <c>SkeletonJoint</c>.
+    /// </summary>
+    [ChunkType(1184004)]
+    public class Vector3Channel(File file, uint type) : AnimationChannel(file, type)
+    {
+        public Vector3[] Values;
+
+        public override void ReadHeader(Stream stream, long length)
+        {
+            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+
+            Values = new Vector3[NumberOfFrames];
+            for (int i = 0; i < NumberOfFrames; i++)
+            {
+                Values[i] = Util.ReadVector3(reader);
+            }
+        }
+
+        public override string ToShortString()
+        {
+            return "Vector 3 Channel";
+        }
+    }
+}
