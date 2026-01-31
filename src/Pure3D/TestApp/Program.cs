@@ -1,9 +1,11 @@
-﻿class Program
+﻿using System;
+
+class Program
 {
     static void Main()
     {
         var file = new Pure3D.File();
-        file.Load("homer_m.p3d");
+        file.Load("l1r1.p3d");
 
         PrintHierarchy(file.RootChunk, 0);
 
