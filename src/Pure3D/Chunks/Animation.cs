@@ -3,21 +3,21 @@ using System.Text;
 
 namespace Pure3D.Chunks
 {
+    /// <summary>
+    /// Parent of an <c>AnimationGroupList</c>
+    /// and an <c>AnimationSize</c>.
+    /// </summary>
     [ChunkType(1183744)]
-    public class Animation : VersionNamed
+    public class AnimationChunk(File file, uint type) : VersionNamed(file, type)
     {
         public string AnimType;
         public float NumberOfFrames;
         public float FrameRate;
         public uint Looping;
 
-        public Animation(File file, uint type) : base(file, type)
-        {
-        }
-
         public override void ReadHeader(Stream stream, long length)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new(stream);
             base.ReadHeader(stream, length);
             AnimType = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
             NumberOfFrames = reader.ReadSingle();
@@ -27,7 +27,12 @@ namespace Pure3D.Chunks
 
         public override string ToString()
         {
-            return $"Animation: {Name} (Version: {Version}, Type: {Type}, {NumberOfFrames} Frames, Framerate: {FrameRate}, Looping: {Looping})";
+            return $"Animation: {Name}, Version: {Version}, {NumberOfFrames} Frames, Framerate: {FrameRate}, Looping: {Looping}";
+        }
+
+        public override string ToShortString()
+        {
+            return "Animation";
         }
     }
 }
