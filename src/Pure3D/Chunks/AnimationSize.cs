@@ -2,8 +2,11 @@ using System.IO;
 
 namespace Pure3D.Chunks
 {
+    /// <summary>
+    /// Size of an animation for different platforms
+    /// </summary>
     [ChunkType(1183748)]
-    public class AnimationSize : Chunk
+    public class AnimationSize(File file, uint type) : Chunk(file, type)
     {
         public uint Version;
         public uint PC;
@@ -11,13 +14,9 @@ namespace Pure3D.Chunks
         public uint Xbox;
         public uint GameCube;
 
-        public AnimationSize(File file, uint type) : base(file, type)
-        {
-        }
-
         public override void ReadHeader(Stream stream, long length)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new(stream);
             Version = reader.ReadUInt32();
             PC = reader.ReadUInt32();
             PS2 = reader.ReadUInt32();
@@ -27,7 +26,12 @@ namespace Pure3D.Chunks
 
         public override string ToString()
         {
-            return $"Animation Size: Version {Version}, PC {PC}, PS2 {PS2}, Xbox {Xbox}, GameCube {GameCube}";
+            return $"Animation Size (Version: {Version}, PC: {PC}, PS2: {PS2}, Xbox: {Xbox}, GameCube: {GameCube})";
+        }
+
+        public override string ToShortString()
+        {
+            return "Animation Size";
         }
     }
 }
