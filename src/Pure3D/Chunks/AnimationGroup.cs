@@ -2,15 +2,14 @@ using System.IO;
 
 namespace Pure3D.Chunks
 {
+    /// <summary>
+    /// Animation of a <c>SkeletonJoint</c>.
+    /// </summary>
     [ChunkType(1183745)]
-    public class AnimationGroup : VersionNamed
+    public class AnimationGroup(File file, uint type) : VersionNamed(file, type)
     {
         public uint NumberOfChannels;
         public uint GroupId;
-
-        public AnimationGroup(File file, uint type) : base(file, type)
-        {
-        }
 
         public override void ReadHeader(Stream stream, long length)
         {
@@ -22,7 +21,12 @@ namespace Pure3D.Chunks
 
         public override string ToString()
         {
-            return $"Animation Group: {Name}, Channels {NumberOfChannels}, Group {GroupId}";
+            return $"Animation Group: {Name}, {NumberOfChannels} Channels, Group {GroupId}";
+        }
+
+        public override string ToShortString()
+        {
+            return "Animation Group";
         }
     }
 }
