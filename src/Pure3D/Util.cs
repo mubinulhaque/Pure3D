@@ -16,6 +16,13 @@ namespace Pure3D
             return str;
         }
 
+        /// <summary>
+        /// ReadString accessor because Pure3D loves null terminated strings.
+        /// </summary>
+        public static string ReadString(BinaryReader reader, int strLen)
+        {
+            string str = Encoding.ASCII.GetString(reader.ReadBytes(strLen));
+            str = ZeroTerminate(str);
             return str;
         }
 
