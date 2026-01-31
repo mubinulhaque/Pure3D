@@ -1,10 +1,9 @@
 ﻿using System.IO;
-using System.Text;
 
 namespace Pure3D.Chunks
 {
     [ChunkType(94211)]
-    public class BillboardDisplayInfo : Chunk
+    public class BillboardDisplayInfo(File file, uint type) : Chunk(file, type)
     {
         public uint Version;
         public Quaternion Rotation;
@@ -13,16 +12,12 @@ namespace Pure3D.Chunks
         public float SourceRange;
         public float EdgeRange;
 
-        public BillboardDisplayInfo(File file, uint type) : base(file, type)
-        {
-        }
-
         public override void ReadHeader(Stream stream, long length)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new(stream);
             Version = reader.ReadUInt32();
             Rotation = Util.ReadQuaternion(reader);
-            CutOffMode = Util.ZeroTerminate(Encoding.ASCII.GetString(new BinaryReader(stream).ReadBytes(4)));
+            CutOffMode = Util.ReadString(reader, 4);
             UVOffsetRange = Util.ReadVector2(reader);
             SourceRange = reader.ReadSingle();
             EdgeRange = reader.ReadSingle();
@@ -30,7 +25,12 @@ namespace Pure3D.Chunks
 
         public override string ToString()
         {
-            return "Billboard Display Info";
+            return $"Billboard Display Info (Rotation: {Rotation}, Cut Off Mode: {CutOffMode}, Version: {Version})";
+        }
+
+        public override string ToShortString()
+        {
+            return "Billboard Display Information";
         }
     }
 }
