@@ -22,7 +22,7 @@ namespace Pure3D.Chunks
 
         public override string ToShortString()
         {
-            return "Breakable Object";
+            return $"{Count} Breakable Objects";
         }
     }
 }
