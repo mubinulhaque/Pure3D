@@ -17,7 +17,7 @@ namespace Pure3D.Chunks
         {
             BinaryReader reader = new(stream);
             Version = reader.ReadUInt32();
-            Parameter = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            Parameter = Util.ReadString(reader, 4);
             NumberOfFrames = reader.ReadUInt32();
 
             Frames = new ushort[NumberOfFrames];
@@ -47,7 +47,7 @@ namespace Pure3D.Chunks
         {
             BinaryReader reader = new(stream);
             Version = reader.ReadUInt32();
-            Parameter = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            Parameter = Util.ReadString(reader, 4);
             Start = reader.ReadUInt16() == 1;
             NumberOfFrames = reader.ReadUInt32();
 
@@ -259,7 +259,7 @@ namespace Pure3D.Chunks
         {
             BinaryReader reader = new(stream);
             Version = reader.ReadUInt32();
-            Parameter = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            Parameter = Util.ReadString(reader, 4);
             Mapping = reader.ReadUInt16();
             Constants = Util.ReadVector3(reader);
             NumberOfFrames = reader.ReadUInt32();
@@ -297,7 +297,7 @@ namespace Pure3D.Chunks
         {
             BinaryReader reader = new(stream);
             Version = reader.ReadUInt32();
-            Parameter = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            Parameter = Util.ReadString(reader, 4);
             Mapping = reader.ReadUInt16();
             Constants = Util.ReadVector3(reader);
             NumberOfFrames = reader.ReadUInt32();

@@ -19,7 +19,7 @@ namespace Pure3D.Chunks
         {
             BinaryReader reader = new(stream);
             base.ReadHeader(stream, length);
-            AnimType = Util.ZeroTerminate(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            AnimType = Util.ReadString(reader, 4);
             NumberOfFrames = reader.ReadSingle();
             FrameRate = reader.ReadSingle();
             Looping = reader.ReadUInt32();
