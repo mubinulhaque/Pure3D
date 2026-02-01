@@ -1,26 +1,25 @@
-﻿using System.IO;
-
-namespace Pure3D.Chunks
+﻿namespace Pure3D.Chunks
 {
     [ChunkType(102402)]
-    public class ImageData : Chunk
+    public class ImageData(File file, uint type) : Chunk(file, type)
     {
         public byte[] Data;
 
-        public ImageData(File file, uint type) : base(file, type)
-        {
-        }
-
         public override void ReadHeader(Stream stream, long length)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new(stream);
             uint len = reader.ReadUInt32();
             Data = reader.ReadBytes((int)len);
         }
 
         public override string ToString()
         {
-            return $"Image Data (Header: {Data[0].ToString("X")} {Data[1].ToString("X")} {Data[2].ToString("X")} {Data[3].ToString("X")}) (Len: {Data.Length})";
+            return $"Image Data (Header: {Data[0]:X} {Data[1]:X} {Data[2]:X} {Data[3]:X}) (Length: {Data.Length})";
+        }
+
+        public override string ToShortString()
+        {
+            return "Image Data";
         }
     }
 }
