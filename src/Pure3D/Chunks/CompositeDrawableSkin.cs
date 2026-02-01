@@ -1,26 +1,25 @@
-using System.IO;
-
 namespace Pure3D.Chunks
 {
     [ChunkType(17685)]
-    public class CompositeDrawableSkin : Named
+    public class CompositeDrawableSkin(File file, uint type) : Named(file, type)
     {
         public uint IsTranslucent;
 
-        public CompositeDrawableSkin(File file, uint type) : base(file, type)
-        {
-        }
-
         public override void ReadHeader(Stream stream, long length)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new(stream);
             base.ReadHeader(stream, length);
             IsTranslucent = reader.ReadUInt32();
         }
 
         public override string ToString()
         {
-            return $"Composite Drawable Skin: {Name}, IsTranslucent = {IsTranslucent}";
+            return $"Composite Drawable Skin: {Name}, Translucent: {IsTranslucent}";
+        }
+
+        public override string ToShortString()
+        {
+            return "Composite Drawable Skin";
         }
     }
 }
