@@ -1,15 +1,9 @@
-﻿using System.IO;
-
-namespace Pure3D.Chunks
+﻿namespace Pure3D.Chunks
 {
     [ChunkType(17689)]
-    public class CompositeDrawableSortOrder : Chunk
+    public class CompositeDrawableSortOrder(File file, uint type) : Chunk(file, type)
     {
         public float SortOrder;
-
-        public CompositeDrawableSortOrder(File file, uint type) : base(file, type)
-        {
-        }
 
         public override void ReadHeader(Stream stream, long length)
         {
@@ -19,6 +13,11 @@ namespace Pure3D.Chunks
         public override string ToString()
         {
             return $"Composite Drawable Sort Order ({SortOrder})";
+        }
+
+        public override string ToShortString()
+        {
+            return "Composite Drawable Sort Order";
         }
     }
 }
