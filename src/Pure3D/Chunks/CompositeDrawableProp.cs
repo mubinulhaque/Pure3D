@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Pure3D.Chunks
+﻿namespace Pure3D.Chunks
 {
     [ChunkType(17686)]
     public class CompositeDrawableProp(File file, uint type) : Named(file, type)
