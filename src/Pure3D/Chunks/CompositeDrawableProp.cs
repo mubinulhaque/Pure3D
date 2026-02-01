@@ -3,26 +3,27 @@
 namespace Pure3D.Chunks
 {
     [ChunkType(17686)]
-    public class CompositeDrawableProp : Named
+    public class CompositeDrawableProp(File file, uint type) : Named(file, type)
     {
-        public uint IsTranslucent;
+        public bool IsTranslucent;
         public uint SkeletonJointID;
-
-        public CompositeDrawableProp(File file, uint type) : base(file, type)
-        {
-        }
 
         public override void ReadHeader(Stream stream, long length)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new(stream);
             base.ReadHeader(stream, length);
-            IsTranslucent = reader.ReadUInt32();
+            IsTranslucent = reader.ReadUInt32() == 1;
             SkeletonJointID = reader.ReadUInt32();
         }
 
         public override string ToString()
         {
-            return $"Composite Drawable Prop: {Name}";
+            return $"Composite Drawable Prop: {Name} (Joint: {SkeletonJointID}, Translucent: {IsTranslucent})";
+        }
+
+        public override string ToShortString()
+        {
+            return "Composite Drawable Prop";
         }
     }
 }
