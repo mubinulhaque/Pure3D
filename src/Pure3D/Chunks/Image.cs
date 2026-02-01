@@ -1,32 +1,28 @@
-﻿using System.IO;
-
-namespace Pure3D.Chunks
+﻿namespace Pure3D.Chunks
 {
+    /// <summary>
+    /// Always has a single child of ImageData, which contains the binary data of the Image
+    /// </summary>
     [ChunkType(102401)]
-    public class Image : Named
+    public class Image(File file, uint type) : VersionNamed(file, type)
     {
-        public uint Version;
         public uint Width;
         public uint Height;
         public uint Bpp;
-        public uint Palettized;
-        public uint HasAlpha;
+        public bool Palettized;
+        public bool HasAlpha;
         public Formats Format;
-
-        public Image(File file, uint type) : base(file, type)
-        {
-        }
 
         public override void ReadHeader(Stream stream, long length)
         {
-            BinaryReader reader = new BinaryReader(stream);
-            base.ReadHeader(stream, length);
+            BinaryReader reader = new(stream);
+            Name = Util.ReadString(reader);
             Version = reader.ReadUInt32();
             Width = reader.ReadUInt32();
             Height = reader.ReadUInt32();
             Bpp = reader.ReadUInt32();
-            Palettized = reader.ReadUInt32();
-            HasAlpha = reader.ReadUInt32();
+            Palettized = reader.ReadUInt32() == 1;
+            HasAlpha = reader.ReadUInt32() == 1;
             Format = (Formats)reader.ReadUInt32();
         }
 
@@ -43,6 +39,34 @@ namespace Pure3D.Chunks
             DXT5 = 10,
             P3DI = 11,
             P3DI2 = 25,
+        }
+
+        public override string ToShortString()
+        {
+            return "Image";
+        }
+
+        /// <summary>
+        /// Returns the byte array of the first ImageData child
+        /// </summary>
+        /// <returns>Binary data of the Image</returns>
+        public ImageData LoadImageData()
+        {
+            if (Children.Count != 1)
+                Console.WriteLine($"Image {Name}: invalid number of children!");
+            else if (Children[0] is not ImageData)
+                Console.WriteLine($"Image {Name}: no ImageData child!");
+            else
+            {
+                ImageData child = (ImageData)Children[0];
+
+                if (child != null && Format == Formats.PNG)
+                    return child;
+                else
+                    Console.WriteLine($"Image {Name}: invalid ImageData child!");
+            }
+
+            return null;
         }
     }
 }
