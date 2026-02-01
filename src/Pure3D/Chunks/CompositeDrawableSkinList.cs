@@ -1,15 +1,12 @@
-﻿using System.IO;
-
-namespace Pure3D.Chunks
+﻿namespace Pure3D.Chunks
 {
+    /// <summary>
+    /// Parent of <c>CompositeDrawableSkin</c> chunks
+    /// </summary>
     [ChunkType(17683)]
-    public class CompositeDrawableSkinList : Chunk
+    public class CompositeDrawableSkinList(File file, uint type) : Chunk(file, type)
     {
         public uint NumElements;
-
-        public CompositeDrawableSkinList(File file, uint type) : base(file, type)
-        {
-        }
 
         public override void ReadHeader(Stream stream, long length)
         {
@@ -19,6 +16,11 @@ namespace Pure3D.Chunks
         public override string ToString()
         {
             return $"Composite Drawable Skin List (Elements: {NumElements})";
+        }
+
+        public override string ToShortString()
+        {
+            return $"{NumElements} Composite Drawable Skins";
         }
     }
 }
