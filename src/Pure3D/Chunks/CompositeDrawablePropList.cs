@@ -1,15 +1,12 @@
-﻿using System.IO;
-
-namespace Pure3D.Chunks
+﻿namespace Pure3D.Chunks
 {
+    /// <summary>
+    /// Parent of <c>CompositeDrawableProp</c> chunks
+    /// </summary>
     [ChunkType(17684)]
-    public class CompositeDrawablePropList : Chunk
+    public class CompositeDrawablePropList(File file, uint type) : Chunk(file, type)
     {
         public uint NumElements;
-
-        public CompositeDrawablePropList(File file, uint type) : base(file, type)
-        {
-        }
 
         public override void ReadHeader(Stream stream, long length)
         {
@@ -19,6 +16,11 @@ namespace Pure3D.Chunks
         public override string ToString()
         {
             return $"Composite Drawable Prop List (Elements: {NumElements})";
+        }
+
+        public override string ToShortString()
+        {
+            return $"{NumElements} Composite Drawable Props";
         }
     }
 }
