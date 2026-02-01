@@ -1,20 +1,13 @@
-﻿using System.IO;
-using System.Text;
-
-namespace Pure3D.Chunks
+﻿namespace Pure3D.Chunks
 {
     [ChunkType(65546)]
-    public class IndexList : Chunk
+    public class IndexList(File file, uint type) : Chunk(file, type)
     {
         public uint[] Indices;
 
-        public IndexList(File file, uint type) : base(file, type)
-        {
-        }
-
         public override void ReadHeader(Stream stream, long length)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new(stream);
             uint len = reader.ReadUInt32();
             Indices = new uint[len];
             for (int i = 0; i < len; i++)
@@ -23,7 +16,12 @@ namespace Pure3D.Chunks
 
         public override string ToString()
         {
-            return $"Indices List ({Indices.Length})";
+            return $"Index List ({Indices.Length} Indices)";
+        }
+
+        public override string ToShortString()
+        {
+            return $"{Indices.Length} Indices";
         }
     }
 }
